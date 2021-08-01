@@ -1,0 +1,14 @@
+Spring boot profiles:-
+1, We require different configuration based on the environment like dev, prod,uat & prod. so we make property file for each env and set the profile accordingly on need.
+2. Then, we need to create three  application.properties:
+ application-dev.properties 
+ application-test.properties 
+ application-prod.properties 
+3. Add Active Profile using Property File - spring.profiles.active=dev or prod or test
+4. Command Line - java -jar -Dspring.profiles.active="prod" spring-boot-profile-0.0.1-SNAPSHOT.jar  
+5.  Programmatically 
+	SpringApplication application = new SpringApplication(MyApplication.class);
+	ConfigurableEnvironment environment = new StandardEnvironment();
+	environment.setActiveProfiles("dev");
+	application.setEnvironment(environment);
+	application.run(args);

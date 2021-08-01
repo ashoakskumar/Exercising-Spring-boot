@@ -1,0 +1,113 @@
+Spring:- Inheritance is said to be tightly coupled, to make it decoupled spring uses runtime polymorphism to load
+classes from xml (usually in java main()) and through interface implementation spring IOC uses dependency injection
+to parse dynamic objects (input for pojo)
+2. IOC - Inverse of ccontrol - its principle is to take a control of flow of program by creating a object, configure them, inject and destruct it.
+	It uses strategy design pattern, service locator design pattern, factory pattern and dependency injection.
+3. Dependency Injection - It is a design pattern to implement IOC by setting/parsing  object dependency of different kind.
+4. Bean - it is said to be an object -  intiated and assemble or managed by spring IOC 
+   class:- 
+   @Data
+	@AllArgsConstructor
+	@ToString
+	public class HelloMessage {
+
+		private String message;
+		
+	}
+	
+	-- config service
+		@Configuration
+	@PropertySource("classpath:messages.properties")
+	public class HelloBeanConfig {
+
+		@Value("${motd}")
+		private String message;
+		
+		@Bean(name="myMessage")
+		public HelloMessage helloMessage() {
+			HelloMessage messages = new HelloMessage(message);
+			return messages;
+		}
+	}
+	
+	--main method
+	final ApplicationContext ctx = SpringApplication.run(SpringBootBasicApplication.class, args);
+		//Get Bean by type
+		HelloMessage msg1 = ctx.getBean(HelloMessage.class);
+		System.out.println("Get bean By type: "+ msg1);
+		//Get bean by name
+		HelloMessage msg2 = ctx.getBean("myMessage",HelloMessage.class);
+		System.out.println("Get bean By name: "+ msg2);
+5. @Component : class-level annotation which by default denotes a bean with the same name as the class name with a lowercase first letter.
+ It can be specified a different name using the value argument of the annotation
+6. @Configuration : class-level annotation to say that it can contain bean definition methods annotated with @Bean
+7. @Autowired: it is a technique used by spring IOC to inject object dependency implicitly. IT autowire relationship between collaborating beans.
+   @Autowired annotation to discover the beans automatically and inject collaborating beans (other associated dependent beans) into our bean.
+   @Autowired can be used on following injection points.
+	Constructors, Methods,	Fields and 	Parameters
+	7.1 - Constructors 
+	HelloMessageService service;
+	
+	@Autowired
+	public AutowireDiService(HelloMessageService service) {
+		this.service = service;
+	}
+	
+	public void printMsg() {
+		service.printMsg();
+	}
+	7.2 - Property
+	@Autowired
+	HelloMessageService service;
+8. Qualifier
+	It is used to find out particular bean when there is multiple bean implementaion of same type
+	--example
+	@Component("address")
+	public class Address implements IDAO{
+
+		@Override
+		public void results() {
+			System.out.println("This is Address");
+		}
+
+	}
+	@Component
+	@Qualifier("contact")
+	public class Contact implements IDAO{
+
+		@Override
+		public void results() {
+			System.out.println("This is contact");
+		}
+
+	}
+	
+	@Autowired()
+	@Qualifier("contact")
+	IDAO contact;
+	@Autowired
+	@Qualifier("address")
+	IDAO address;
+	public void print() {
+		contact.results();
+		address.results();
+	}
+9. Required
+	@Autowired annotation required attribute by default value is true, 
+	it means dependency should be available while constructing the bean.
+	We can use @Autowired(required = false) to make injecting dependency is optional by Spring.
+	@Autowired(required = false)
+	Option service;
+		public void setService(Option service) {
+			this.service = service;
+		}
+		public Option getService() {
+			return this.service;
+		}
+	OptionalDependencyService option = ctx.getBean(OptionalDependencyService.class);
+		System.out.println(option.getService());
+	output : null
+10. Component Scan - Spring wants to know on where to look for spring components. Using component scan spring detect spring managed components.
+					 Spring needs more information to locate and register all the spring components with application context when the application starts
+					 Spring Can detect, scan and initiate components from pre-defeined project packages. Auto scan can be done thru @component , @controller, @service & @repository.
+					 @ComponentScan(basePackages = "com.javabydeveloper.spring.bean.animal.reptiles")

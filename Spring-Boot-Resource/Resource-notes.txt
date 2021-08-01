@@ -1,0 +1,26 @@
+Resource: 
+1. IT often used to load file of external resources to spring application. The Resource interface represents external resources.
+2. The ResourceLoader interface provides methods to load resources
+	example:- 
+		@Autowired
+		ResourceLoader resourceLoader;
+		
+		-- methods
+		Resource resource1 = resourceLoader.getResource("classpath:data.txt");
+		InputStream inputStreamLoader = resource1.getInputStream(); try { byte[] bdata =
+				  FileCopyUtils.copyToByteArray(inputStreamLoader); String data = new String(bdata,
+				  StandardCharsets.UTF_8); System.out.println(data); } catch(IOException ioe) {
+				  ioe.printStackTrace(); } 
+3. Resource class
+	@Value("file:data.txt")
+	Resource resource2;
+4. classpath
+	@Value("classpath:sample.json")
+5. Multi resource reader
+	@Value("file:input/data*.txt")
+	Resource[] resources;
+6. File to json object
+	ObjectMapper mapper = new ObjectMapper();
+		Person person = mapper.readValue(resourceClassPath.getFile(), Person.class);
+		System.out.println(person);
+		
