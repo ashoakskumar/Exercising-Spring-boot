@@ -1,0 +1,42 @@
+Spring Boot Exception Handler
+1. spring boot also allows us to provide customized global exception handling where we need not to add try catch block everwhere,
+	we can create a separate class for handling exceptions and it also separates the exception handling code from businesss logic code.
+2. @Controller Advicer - Handles exceptions globally.It alllows to use the same exception handler for multiple controller. 
+3. @ResponseStatus - marks a method or exception class with the status code and reason message that should be returned.
+4. @ExceptionHandler is an annotation for handling exceptions in specific handler classes or handler methods.
+5. Global Exception : Example
+	NoSuchElementException for invalid input when search it from get call
+	@ControllerAdvice
+	public class EmployeeControllerAdvisor {
+		
+		  
+		  @ExceptionHandler(NoSuchElementException.class) public ResponseEntity<String>
+		  handleNoSuchElement(NoSuchElementException noSuchElementException) { return
+		  new ResponseEntity<String>("No record found for the given input",HttpStatus.
+		  BAD_REQUEST); }
+		 
+		@ExceptionHandler(RecordNotFoundException.class)
+		public ResponseEntity<?> recordNotFound(RecordNotFoundException ex) {
+			ControllerException ce = new ControllerException("6006",
+					"REcord not found for the given input: " + ex.getLocalizedMessage());
+			return new ResponseEntity<ControllerException>(ce, HttpStatus.NOT_FOUND);
+		}
+	}
+6. Custom Exception:-
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public class RecordNotFoundException extends RuntimeException{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public RecordNotFoundException(String exception) {
+			super(exception);
+		}
+	}
+	Optional<Employee> employee = repo.findById(empidL);
+		if(employee.isEmpty()) {
+			throw new RecordNotFoundException("Record Not Found:" +empidL);
+		}
+		return employee.get();

@@ -1,0 +1,117 @@
+Rest Controller:-
+1. IT is the combination of both @controller & @responseBody
+ 1.1 @Controller - It extends the usecase of @component to get recognized by spring managed component. It marks the annotated class to be a presentation layer or business layer
+				   so On spring bootstrap started and when a request made, This annotation will inform the dispatcher servlet to include the controller class in scanning for methods
+				   which are mapped by @Requestmapping annotation
+ 1.2 @ResponseBody annotation, the fields from the fetched object are serialized into JSON and returned to the client that requested it.
+ 1.3 @Requestmapping The @RequestMapping annotation is used to map web requests onto specific handler classes and handler methods. 
+	 When @RequestMapping is used on class level it creates a base URI for which the controller will be used. 
+	 When this annotation is used on methods it will give you the URI on which the handler methods will be executed. 
+ 1.4 @Service - We mark beans with @Service to indicate that they're holding the business logic. Besides being used in the service layer, there isn't any other special use for this annotation.
+ 1.5 @Repository’s job is to catch persistence-specific exceptions and re-throw them as one of Spring’s unified unchecked exceptions.	
+
+2. Http Methods:- 
+	2.1 GetMapping - IT is a specialized version of @RequestMapping that act as short cur for @RequestMapping(method=RequestMethod.get).
+		Http get method is used to get the resource representation / information only and not to modify the resources. IT does not change the state of the object/resources, said
+		to be safe methods. Get Api should be Itempontent means that making multiple identical request will produce same result untill Post or Put api change the result.
+		2.1.1 - WIth multiple URI, Value attribute , wildcard allowed in urls
+			2.1.1.1	@RequestMapping(value = {
+					"",
+					"/page",
+					"page*",
+					"view/*,**/msg"
+				})
+			2.1.1.2 @GetMapping(value = {"/user/all","/user/many"}) contains mutliple url with value attribute.
+		2.1.2 - @Requestmapping with requestparam - The @RequestParam annotation can be used with or without a value.The @RequestParam annotation is used with @RequestMapping
+				to bind a web request parameter to the parameter of the handler method.
+			2.1.2.1 -			
+				// Request param with value attribute
+				@GetMapping(value = "/user/request/param/with/value")
+				public ResponseEntity<User> getRequestParamWithValue(@RequestParam(value = "id") long id) {
+					return new ResponseEntity<User>(service.getById(id).get(),HttpStatus.OK);
+				}
+				// Request param without value attribute
+				@GetMapping(value = "/user/request/param/without/value")
+				public ResponseEntity<User> getRequestParamWithOutValue(@RequestParam long id) {
+					return new ResponseEntity<User>(service.getById(id).get(),HttpStatus.OK);
+				}
+				// Request param with optional param
+				@GetMapping(value = "/user/request/param/with/optional/param")
+				public ResponseEntity<User> getRequestParamWithOptionalParam(@RequestParam(value ="id", required = true) long id) {
+					return new ResponseEntity<User>(service.getById(id).get(),HttpStatus.OK);
+				}
+				// Request param with default value
+				@GetMapping(value = "/user/request/param/with/default/value")
+				public ResponseEntity<User> getRequestParamWithDefaultValue(@RequestParam(value="id",defaultValue = "1") long id) {
+					return new ResponseEntity<User>(service.getById(id).get(),HttpStatus.OK);
+				}
+		2.1.3 - @RequestMapping with Multiple param attribute to call specific method handler
+				@GetMapping(value = "/user/request/param/attribute",params = {"id=3"})
+				public ResponseEntity<User> getRequestParamAttributeId3(@RequestParam("id") long id) {
+					return new ResponseEntity<User>(service.getById(id).get(),HttpStatus.OK);
+				}
+				@GetMapping(value = "/user/request/param/attribute",params = {"id=2"})
+				public ResponseEntity<User> getRequestParamAttributeId2(@RequestParam("id") long id) {
+					return new ResponseEntity<User>(service.getById(id).get(),HttpStatus.OK);
+				}
+		2.1.4 - @RequestMapping with regular expression & dynamic urls
+				 The syntax is {varName:regex} where the first part defines the variable name and the second - the regular expression
+				 @GetMapping(value = "/user/request/param/regular/expression/{id:[0-9]+}")
+					public ResponseEntity<User> getRequestParamWithRegularExp(@PathVariable("id") long id) {
+						return new ResponseEntity<User>(service.getById(id).get(),HttpStatus.OK);
+					}
+		2.1.5 @RequestMapping With Headers
+					 @GetMapping(value = "/head", headers = {
+					"content-type=text/plain"
+				})
+				String post() {
+					return "Mapping applied along with headers";
+				}
+		2.1.6 produces & consumes
+						 @RequestMapping(value = "/prod", produces = {
+				"application/JSON"
+			})
+			@ResponseBody
+			String getProduces() {
+				return "Produces attribute";
+			}
+
+			@RequestMapping(value = "/cons", consumes = {
+				"application/JSON",
+				"application/XML"
+			})
+			String getConsumes() {
+				return "Consumes attribute";
+			}
+	2.2 PostMapping- it is a specialized version of @RequestMapping annotation that acts as a shortcut for @RequestMapping(method = RequestMethod.POST).
+					Used to send data to the API server to create or update a resource. The data sent to the server is stored in the request body of the HTTP request.
+					POST is neither safe nor idempotent
+				@PostMapping(path = {"post/create/user"})
+				public ResponseEntity<User> createUser(@RequestBody User user ) {
+					return new ResponseEntity<User>(service.createUser(user),HttpStatus.OK);
+				}
+				@PostMapping(path = {"post/produces/create/user"},produces = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<User> createUserProduces(@RequestBody User user ) {
+					return new ResponseEntity<User>(service.createUser(user),HttpStatus.OK);
+				}
+				@PostMapping(path = {"post/consumes/create/user/{id}"},consumes = MediaType.APPLICATION_JSON_VALUE)
+				public ResponseEntity<User> createUserConsumes(@RequestBody User user,@PathVariable("id")long id ) {
+					System.out.println("id:" + id);
+					return new ResponseEntity<User>(service.createUser(user),HttpStatus.OK);
+				}
+	2.3 PutMapping - PUT APIs primarily to update existing resource or create a resource.The difference is that PUT requests are idempotent. 
+					That is, calling the same PUT request multiple times will always produce the same result.
+					@PutMapping(value = {"/put/update"})
+					public ResponseEntity<User> updateUser(@RequestParam(value = "id") long id, @RequestBody final User user) {
+						return new ResponseEntity<User>(service.updateUser(user, id),HttpStatus.OK);
+					}
+	2.4 PatchMapping - PATCH requests are to make partial update on a resource
+					@PatchMapping(value = {"/patch/partial/insert/{id}"})
+					public ResponseEntity<User> patchRequest(@RequestBody User user,@PathVariable("id") long id) {
+						return new ResponseEntity<User>(service.patchUser(user, id),HttpStatus.OK);
+					}
+	2.5 DeleteMapping - DELETE APIs are used to delete resources (identified by the Request-URI).
+			@DeleteMapping("/delete/user")
+			public ResponseEntity<String> deleteUser(@RequestBody User user) {
+				return new ResponseEntity<>(service.deleteUser(user),HttpStatus.OK);
+			}
