@@ -115,3 +115,4 @@ Rest Controller:-
 			public ResponseEntity<String> deleteUser(@RequestBody User user) {
 				return new ResponseEntity<>(service.deleteUser(user),HttpStatus.OK);
 			}
+	2.6 RestTemplate - pending to update here
